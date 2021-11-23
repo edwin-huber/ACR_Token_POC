@@ -53,6 +53,19 @@ def decode_list_scopemaps_response(response):
             print('  Description: ', item['properties']['description'])
             print('  Actions: ', item['properties']['actions'])
 
+# List token Ids
+def decode_token_ids(response):
+    # print all the token names:
+    if response:
+        # read the JSON content
+        json_resp = response.json()
+        # get the items
+        items = json_resp['value']
+        ids = []
+        for item in items:
+            ids.append(item["id"])
+        return ids
+
 # list ops
 # GET https://management.azure.com/providers/Microsoft.ContainerRegistry/operations?api-version=2019-05-01
 # url = f'{resource}providers/Microsoft.ContainerRegistry/operations?api-version=2019-05-01'
@@ -62,9 +75,14 @@ def get_list_token_url():
     url = f'{resource}/{scope}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/{acrTokenResourceApi}?api-version=2021-08-01-preview'
     return url
 
-# list tokens
+# list scopemaps
 def get_list_scopemap_url():
     url = f'{resource}/{scope}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/{acrScopeMapResourceApi}?api-version=2021-08-01-preview'
+    return url
+
+# generate credentials (and passwords)
+def get_generate_credentials_url():
+    url = f'{resource}/{scope}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registry}/generateCredentials?api-version={createtokenapiversion}'
     return url
 
 # create token
@@ -85,7 +103,20 @@ def generate_token_json():
     }
     return token_attributes
 
-# samples
+# generate credentials
+# NOTE: a password is either called "password1" or "password2", which are used as enums in the token system
+# using this API spec
+# https://github.com/Azure/azure-rest-api-specs/blob/main/specification/containerregistry/resource-manager/Microsoft.ContainerRegistry/preview/2021-08-01-preview/examples/TokenUpdate.json
+# exmaple here:
+# https://github.com/Azure/azure-rest-api-specs/blob/main/specification/containerregistry/resource-manager/Microsoft.ContainerRegistry/preview/2021-08-01-preview/examples/RegistryGenerateCredentials.json
+def generate_credentials_json(tokenId):
+    generatecredentials_parameters = {
+        'tokenId':tokenId,
+        'name':'password1',
+        }     
+    return generatecredentials_parameters
+
+# examples:
 
 # list tokens
 # r1 = requests.get(get_list_token_url(), headers=headers, params=params)
@@ -98,3 +129,14 @@ def generate_token_json():
 http.client.HTTPConnection.debuglevel = 1
 r3 = requests.put(get_create_token_url("myPyTest2"), headers=headers, json=generate_token_json()) # json=generate_create_token_json())
 print(json.dumps(r3.json(), indent=4, separators=(',', ': ')))
+
+# an example to generate a token password
+r4 = requests.get(get_list_token_url(), headers=headers, params=params)
+# we shall just choose the first token in the list of tokens returned as an example
+tokenIDToUpdate=decode_token_ids(r4)[0]
+print('Updating this token password:')
+print(tokenIDToUpdate)
+
+# http.client.HTTPConnection.debuglevel = 1
+r5 = requests.post(get_generate_credentials_url(), headers=headers, json=generate_credentials_json(tokenIDToUpdate)) # json=generate_create_token_json())
+print(json.dumps(r5.json(), indent=4, separators=(',', ': ')))

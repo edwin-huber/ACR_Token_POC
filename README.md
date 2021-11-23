@@ -41,6 +41,15 @@ https://docs.microsoft.com/en-us/rest/api/containerregistry/operations/list
 i.e. using PostMan:  
 ```GET https://management.azure.com/providers/Microsoft.ContainerRegistry/operations?api-version=2019-05-01```
 
+#### Creating Token Passwords
+
+You need to use the generateCredentials API on the registry to generate passwords.
+This also requires that you have created or retrieved the tokenId for the token for which you are creating a password.
+
+See:
+https://github.com/Azure/azure-rest-api-specs/blob/main/specification/containerregistry/resource-manager/Microsoft.ContainerRegistry/preview/2021-08-01-preview/examples/RegistryGenerateCredentials.json
+
+
 
 ## Using the sample code
 

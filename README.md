@@ -58,3 +58,8 @@ The current Python module for ACR is available here, but at the time of the POC 
 
 https://docs.microsoft.com/en-us/python/api/overview/azure/containerregistry-readme?view=azure-python-preview
 
+## Using Azure Container Registry with Jenkins
+
+We provide details on how to do this, including publishing to Kubernetes.
+
+https://docs.microsoft.com/en-us/azure/developer/jenkins/deploy-from-github-to-aks

@@ -1,6 +1,7 @@
 # ACR_Token_POC
 POC documentation and notes for the use of Azure Container Registry with scoped registry access tokens.  
 The goal is to create an implementation which supports the creation of tokens scoped to individual repositories via REST API, pending their inclusion in our SDKs.
+This POC was only intended for use with the preview version of the registry API supporting scoped access tokens.
 
 Tokens should be provided to customers / users to download specific images from the registry, to deploy in their own environments, without being bound to a deployment in Azure.
 
